@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/registerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterPageFragment">
+
+    <ImageButton
+        android:id="@+id/userPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/registerPersonName"
+        app:layout_constraintEnd_toEndOf="@+id/registerPersonName"
+        app:layout_constraintStart_toStartOf="@+id/registerPersonName"
+        tools:src="@tools:sample/avatars" />
+
+    <EditText
+        android:id="@+id/registerPersonName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:ems="10"
+        android:hint="@string/FullName"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toTopOf="@+id/registerEmailAddress"
+        app:layout_constraintEnd_toEndOf="@+id/registerEmailAddress"
+        app:layout_constraintStart_toStartOf="@+id/registerEmailAddress" />
+
+    <EditText
+        android:id="@+id/registerEmailAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/Email"
+        android:inputType="textEmailAddress"
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/registerPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/Password"
+        android:inputType="textPassword"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="@+id/registerEmailAddress"
+        app:layout_constraintStart_toStartOf="@+id/registerEmailAddress"
+        app:layout_constraintTop_toBottomOf="@+id/registerEmailAddress" />
+
+    <TextView
+        android:id="@+id/goToLoginTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:text="@string/GoToLoginTextView"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="@+id/registerPassword"
+        app:layout_constraintStart_toStartOf="@+id/registerPassword"
+        app:layout_constraintTop_toBottomOf="@+id/registerPassword" />
+
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/Register"
+        app:layout_constraintEnd_toEndOf="@+id/goToLoginTextView"
+        app:layout_constraintStart_toStartOf="@+id/goToLoginTextView"
+        app:layout_constraintTop_toBottomOf="@+id/goToLoginTextView" />
+</androidx.constraintlayout.widget.ConstraintLayout>
