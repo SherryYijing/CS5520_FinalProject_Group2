@@ -8,14 +8,14 @@
     tools:context=".UserProfileFragment">
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/userProfilePhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@+id/userNameTextView"
         app:layout_constraintEnd_toEndOf="@+id/userNameTextView"
         app:layout_constraintStart_toStartOf="@+id/userNameTextView"
-        tools:src="@tools:sample/avatars" />
+        tools:src="@drawable/select_avatar" />
 
     <TextView
         android:id="@+id/userNameTextView"

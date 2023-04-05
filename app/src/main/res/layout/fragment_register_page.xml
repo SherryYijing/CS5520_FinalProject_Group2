@@ -5,6 +5,7 @@
     android:id="@+id/registerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:tag='"default"'
     tools:context=".RegisterPageFragment">
 
     <ImageButton
@@ -15,7 +16,7 @@
         app:layout_constraintBottom_toTopOf="@+id/registerPersonName"
         app:layout_constraintEnd_toEndOf="@+id/registerPersonName"
         app:layout_constraintStart_toStartOf="@+id/registerPersonName"
-        tools:src="@tools:sample/avatars" />
+        tools:src="@drawable/select_avatar" />
 
     <EditText
         android:id="@+id/registerPersonName"
