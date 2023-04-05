@@ -138,7 +138,8 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void clickLoginButton(FirebaseUser firebaseUser) {
-
+        this.currentUser = firebaseUser;
+        populateTheScreen();
     }
 
     /**
