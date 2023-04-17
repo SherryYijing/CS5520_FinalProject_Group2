@@ -177,6 +177,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void toNavigation(String day) {
+
+    }
+
+    @Override
     public void editEvent() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),

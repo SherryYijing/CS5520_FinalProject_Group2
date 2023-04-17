@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class TimeTableFragment extends Fragment implements RecyclerViewClickListener {
     private TextView mon, tue, wed, thu, fri;
-    private Button newEventButton;
+    private Button newEventButton, showNavigationButton;
     private static final String ARG_DAY = "day";
     private RecyclerView weekRecyclerView, eventRecyclerView;
     private WeekAdapter weekAdapter;
@@ -50,7 +50,8 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_time_table, container, false);
-        Button newEventButton = view.findViewById(R.id.newEventButton);
+        newEventButton = view.findViewById(R.id.newEventButton);
+        showNavigationButton = view.findViewById(R.id.showNavigationButton);
         ArrayList<Week> weekdays = new ArrayList<>();
         weekdays.add(new Week("Mon"));
         weekdays.add(new Week("Tue"));
@@ -69,6 +70,11 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
         events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
         events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
         events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
 
         eventRecyclerView = view.findViewById(R.id.eventRecyclerView);
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
@@ -82,6 +88,13 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
             @Override
             public void onClick(View v) {
                 iListener.toAddEvent(selectedDay);
+            }
+        });
+
+        showNavigationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iListener.toNavigation(selectedDay);
             }
         });
 
@@ -127,6 +140,7 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
 
     public interface ITimeTableActivity {
         void toAddEvent(String day);
+        void toNavigation(String day);
     }
 
 }
