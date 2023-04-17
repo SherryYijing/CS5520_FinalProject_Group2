@@ -1,47 +1,35 @@
 package com.example.cs5520_finalproject_group2;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link EditEventFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class EditEventFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String ARG_EVENT = "event";
+    private Event event;
+    private TextView editEventName, editStartTime, editEndTime, editEventLocation;
+    private RadioGroup editGroup;
+    private Button editSaveButton, editDeleteButton;
+    private IEditEventActivity editEventActivity;
 
     public EditEventFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EditEventFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static EditEventFragment newInstance(String param1, String param2) {
+    public static EditEventFragment newInstance(Event event) {
         EditEventFragment fragment = new EditEventFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(ARG_EVENT, event);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,9 +37,11 @@ public class EditEventFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            if (args.containsKey(ARG_EVENT)) {
+                event = (Event) args.getSerializable(ARG_EVENT);
+            }
         }
     }
 
@@ -59,6 +49,76 @@ public class EditEventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_event, container, false);
+        View view = inflater.inflate(R.layout.fragment_edit_event, container, false);
+        editEventName = view.findViewById(R.id.editEventName);
+        editStartTime = view.findViewById(R.id.editStartTime);
+        editEndTime = view.findViewById(R.id.editEndTime);
+        editEventLocation = view.findViewById(R.id.editEventLocation);
+        editGroup = view.findViewById(R.id.editGroup);
+        editSaveButton = view.findViewById(R.id.editSaveButton);
+        editDeleteButton = view.findViewById(R.id.editDeleteButton);
+
+        editEventName.setText(event.getName());
+        editStartTime.setText(event.getStartTime());
+        editEndTime.setText(event.getEndTime());
+        editEventLocation.setText(event.getLocation());
+
+        editSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = editEventName.getText().toString();
+                String startTime = editStartTime.getText().toString();
+                String endTime = editEndTime.getText().toString();
+                String location = editEventLocation.getText().toString();
+                if (name.equals("")) {
+                    editEventName.setError("Event Name Cannot Be Empty!");
+                } else if (startTime.equals("")) {
+                    editStartTime.setError("Event Start Time Cannot Be Empty!");
+                } else if (endTime.equals("")) {
+                    editEndTime.setError("Event End Time Cannot Be Empty!");
+                } else if (location.equals("")) {
+                    editEventLocation.setError("Event Location Cannot Be Empty!");
+                } else {
+                    event.setName(name);
+                    event.setStartTime(startTime);
+                    event.setEndTime(endTime);
+                    event.setLocation(location);
+                    Log.d("EVENT", "onClick: " + event.toString());
+                    editEventInDb(event);
+                    editEventActivity.editEvent();
+                }
+            }
+        });
+
+        editDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteEventInDb(event);
+                editEventActivity.deleteEvent();
+            }
+        });
+
+        return view;
+    }
+
+    private void deleteEventInDb(Event event) {
+    }
+
+    private void editEventInDb(Event event) {
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof IEditEventActivity) {
+            editEventActivity = (IEditEventActivity) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement IEditEventActivity");
+        }
+    }
+
+    public interface IEditEventActivity {
+        void editEvent();
+        void deleteEvent();
     }
 }

@@ -21,10 +21,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addStartTime2" />
+        app:layout_constraintTop_toBottomOf="@+id/addEndTime" />
 
     <EditText
-        android:id="@+id/addStartTime2"
+        android:id="@+id/addEndTime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -102,7 +102,7 @@
         app:layout_constraintTop_toBottomOf="@+id/addEventLocation" />
 
     <RadioGroup
-        android:id="@+id/radioGroup"
+        android:id="@+id/addGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -148,12 +148,6 @@
             android:layout_weight="1"
             android:text="@string/addFri" />
 
-        <RadioButton
-            android:id="@+id/addNon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/addNon" />
     </RadioGroup>
 
     <Button
@@ -166,6 +160,6 @@
         android:text="@string/addSaveButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/addGroup" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

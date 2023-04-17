@@ -40,4 +40,14 @@
     <string name="editSaveButton">save</string>
     <string name="previousButton">Previous</string>
     <string name="nextButton">next</string>
+    <string name="timeTableButton">Add Event</string>
+    <string name="eventRowName" />
+    <string name="eventRowTime" />
+    <string name="eventRowLocation" />
+    <string name="editMon">Mon</string>
+    <string name="editTue">Tue</string>
+    <string name="editWed">Wed</string>
+    <string name="editThu">Thu</string>
+    <string name="editFri">Fri</string>
+    <string name="editDeleteButton">Delete</string>>
 </resources>

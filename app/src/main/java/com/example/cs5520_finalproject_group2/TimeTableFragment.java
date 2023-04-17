@@ -1,47 +1,40 @@
 package com.example.cs5520_finalproject_group2;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link TimeTableFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class TimeTableFragment extends Fragment {
+import java.util.ArrayList;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+public class TimeTableFragment extends Fragment implements RecyclerViewClickListener {
+    private TextView mon, tue, wed, thu, fri;
+    private Button newEventButton;
+    private static final String ARG_DAY = "day";
+    private RecyclerView weekRecyclerView, eventRecyclerView;
+    private WeekAdapter weekAdapter;
+    private ArrayList<Event> events = new ArrayList<>();
+    private EventAdapter eventAdapter;
+    private Event currentEvent;
+    private String selectedDay;
+    private ITimeTableActivity iListener;
     public TimeTableFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TimeTableFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TimeTableFragment newInstance(String param1, String param2) {
+    public static TimeTableFragment newInstance() {
         TimeTableFragment fragment = new TimeTableFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,16 +42,91 @@ public class TimeTableFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        loadEventFromDb("Mon");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_time_table, container, false);
+        View view = inflater.inflate(R.layout.fragment_time_table, container, false);
+        Button newEventButton = view.findViewById(R.id.newEventButton);
+        ArrayList<Week> weekdays = new ArrayList<>();
+        weekdays.add(new Week("Mon"));
+        weekdays.add(new Week("Tue"));
+        weekdays.add(new Week("Wed"));
+        weekdays.add(new Week("Thu"));
+        weekdays.add(new Week("Fri"));
+        weekRecyclerView = view.findViewById(R.id.weekRecyclerView);
+        weekAdapter = new WeekAdapter(weekdays, view, this);
+        weekRecyclerView.setLayoutManager(new LinearLayoutManager(
+                this.getContext(), LinearLayoutManager.HORIZONTAL, false
+        ));
+        weekRecyclerView.setAdapter(weekAdapter);
+
+        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+
+        eventRecyclerView = view.findViewById(R.id.eventRecyclerView);
+        eventRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        eventAdapter = new EventAdapter(events);
+        eventRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        eventRecyclerView.setAdapter(eventAdapter);
+        loadEventFromDb("Mon");
+
+
+        newEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iListener.toAddEvent(selectedDay);
+            }
+        });
+
+        return view;
+
     }
+
+    private void loadEventFromDb(String day) {
+    }
+
+    @Override
+    public void recyclerViewListClicked(int position) {
+        switch (position) {
+            case 0:
+                this.selectedDay = "Mon";
+                break;
+            case 1:
+                this.selectedDay = "Tue";
+                break;
+            case 2:
+                this.selectedDay = "Wed";
+                break;
+            case 3:
+                this.selectedDay = "Thu";
+                break;
+            case 4:
+                this.selectedDay = "Fri";
+                break;
+        }
+        loadEventFromDb(this.selectedDay);
+        Log.d("click", "recyclerViewListClicked: " + this.selectedDay);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof TimeTableFragment.ITimeTableActivity) {
+            iListener = (ITimeTableActivity) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement ITimeTableActivity");
+        }
+    }
+
+    public interface ITimeTableActivity {
+        void toAddEvent(String day);
+    }
+
 }

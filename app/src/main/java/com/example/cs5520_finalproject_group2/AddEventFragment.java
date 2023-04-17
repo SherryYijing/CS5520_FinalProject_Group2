@@ -1,47 +1,36 @@
 package com.example.cs5520_finalproject_group2;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AddEventFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+
 public class AddEventFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private static final String ARG_DAY = "day";
+    TextView addEventName, addStartTime, addEndTime, addEventLocation;
+    RadioGroup addGroup;
+    Button addSaveButton;
+    Event event;
+    IAddEventActivity addEventActivity;
     public AddEventFragment() {
         // Required empty public constructor
     }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddEventFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AddEventFragment newInstance(String param1, String param2) {
+    public static AddEventFragment newInstance(String day) {
         AddEventFragment fragment = new AddEventFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_DAY, day);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,9 +38,11 @@ public class AddEventFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            if (args.containsKey(ARG_DAY)) {
+                event.setDay(args.getString(ARG_DAY));
+            }
         }
     }
 
@@ -59,6 +50,78 @@ public class AddEventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_event, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_event, container, false);
+        Bundle args = getArguments();
+        String day = args.getString(ARG_DAY);
+        addEventName = view.findViewById(R.id.addEventName);
+        addStartTime = view.findViewById(R.id.addStartTime);
+        addEndTime = view.findViewById(R.id.addEndTime);
+        addEventLocation = view.findViewById(R.id.addEventLocation);
+        addGroup = view.findViewById(R.id.addGroup);
+        addSaveButton = view.findViewById(R.id.addSaveButton);
+
+        addGroup.check(getDefaultCheckedDay(day));
+
+        addSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = addEventName.getText().toString();
+                String startTime = addStartTime.getText().toString();
+                String endTime = addEndTime.getText().toString();
+                String location = addEventLocation.getText().toString();
+                if (name.equals("")) {
+                    addEventName.setError("Event Name Cannot Be Empty!");
+                } else if (startTime.equals("")) {
+                    addStartTime.setError("Event Start Time Cannot Be Empty!");
+                } else if (endTime.equals("")) {
+                    addEndTime.setError("Event End Time Cannot Be Empty!");
+                } else if (location.equals("")) {
+                    addEventLocation.setError("Event Location Cannot Be Empty!");
+                } else {
+                    event.setName(name);
+                    event.setStartTime(startTime);
+                    event.setEndTime(endTime);
+                    event.setLocation(location);
+                    Log.d("EVENT", "onClick: " + event.toString());
+                    addEventToDb(event);
+                    addEventActivity.addEvent();
+                }
+            }
+        });
+
+        return view;
+    }
+
+    private void addEventToDb(Event event) {
+
+    }
+
+    private int getDefaultCheckedDay(String day) {
+        if (day.equals("Mon")) {
+            return 0;
+        } else if (day.equals("Tue")) {
+            return 1;
+        } else if (day.equals("Wed")) {
+            return 2;
+        } else if (day.equals("Thu")) {
+            return 3;
+        } else if (day.equals("Fri")) {
+            return 4;
+        }
+        return 0;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof IAddEventActivity) {
+            addEventActivity = (IAddEventActivity) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement IAddEventActivity");
+        }
+    }
+
+    public interface IAddEventActivity {
+        void addEvent();
     }
 }

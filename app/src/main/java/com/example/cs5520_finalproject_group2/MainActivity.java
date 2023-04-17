@@ -18,7 +18,8 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements
         RegisterPageFragment.fromRegisterPageFragment, LoginPageFragment.fromLoginPageFragment,
-        UserProfileFragment.fromUserProfileFragment {
+        UserProfileFragment.fromUserProfileFragment, AddEventFragment.IAddEventActivity,
+        TimeTableFragment.ITimeTableActivity, EditEventFragment.IEditEventActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
     private String registering = null;
@@ -54,18 +55,22 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void populateTheScreen() {
-        if (currentUser != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, UserProfileFragment.newInstance(),
-                            "mainFragment")
-                    .commit();
-
-        } else {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, LoginPageFragment.newInstance(),
-                            "loginFragment")
-                    .commit();
-        }
+//        if (currentUser != null) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.fragmentContainer, UserProfileFragment.newInstance(),
+//                            "mainFragment")
+//                    .commit();
+//
+//        } else {
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.fragmentContainer, LoginPageFragment.newInstance(),
+//                            "loginFragment")
+//                    .commit();
+//        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
+                        "TimeTableFragment")
+                .commit();
     }
 
 
@@ -152,5 +157,38 @@ public class MainActivity extends AppCompatActivity implements
         setImageUri(null);
         setRegistering(null);
         populateTheScreen();
+    }
+
+
+    @Override
+    public void addEvent() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
+                        "TimeTableFragment")
+                .commit();
+    }
+
+    @Override
+    public void toAddEvent(String day) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, AddEventFragment.newInstance(day),
+                        "AddEventFragment")
+                .commit();
+    }
+
+    @Override
+    public void editEvent() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
+                        "TimeTableFragment")
+                .commit();
+    }
+
+    @Override
+    public void deleteEvent() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
+                        "TimeTableFragment")
+                .commit();
     }
 }
