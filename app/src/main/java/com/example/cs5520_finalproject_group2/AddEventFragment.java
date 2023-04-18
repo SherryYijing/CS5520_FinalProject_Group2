@@ -103,7 +103,7 @@ public class AddEventFragment extends Fragment {
         db.collection("user")
                 .document(firebaseAuth.getCurrentUser().getEmail())
                 .collection(event.getDay())
-                .document(event.getStartTime())
+                .document(event.getName())
                 .set(event);
     }
 
