@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +22,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -115,42 +119,78 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
             }
         });
 
-        return view;
+        // Create a listener for firebase data change
+        db.collection("user")
+                .document(currentUser.getEmail())
+                .collection(selectedDay)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error == null) {
+                            // Retrieving all the elements from firebase
+                            ArrayList<Event> newEvents = new ArrayList<>();
+                            for (DocumentSnapshot documentSnapshot : value.getDocuments()) {
+                                newEvents.add(documentSnapshot.toObject(Event.class));
+                            }
+                            // Replace all the items in the current recycleView with the received elements
+                            eventAdapter.setEvents(newEvents);
+                            eventAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
 
+        return view;
     }
 
     private void loadEventFromDb(String day) {
         ArrayList<Event> eventList = new ArrayList<>();
         selectedDay = day;
-        Log.d("get", "loadEventFromDb: ");
-        db.collection("users")
+//        Log.d("get", "loadEventFromDb: ");
+
+
+        db.collection("user")
                 .document(currentUser.getEmail())
                 .collection(selectedDay)
-                .get()
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("get", "onFailure: ");
-                    }
-                })
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
-                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                        if(task.isSuccessful()){
+                            for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()){
                                 Event event = queryDocumentSnapshot.toObject(Event.class);
-                                Log.d("get", "onComplete: " + event.toString());
                                 eventList.add(event);
                             }
-                            if (eventList.size() < 1) {
-                                Toast.makeText(getContext(), "You have no event on this day"
-                                        , Toast.LENGTH_LONG).show();
-                            }
-                            Event.sort(eventList);
                             updateEventRecyclerView(eventList);
                         }
                     }
                 });
+//        db.collection("users")
+//                .document(currentUser.getEmail())
+//                .collection(selectedDay)
+//                .get()
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.d("get", "onFailure: ");
+//                    }
+//                })
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if(task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+//                                Event event = queryDocumentSnapshot.toObject(Event.class);
+//                                Log.d("demo", "onComplete: " + queryDocumentSnapshot.toString());
+//                                eventList.add(event);
+//                            }
+//                            if (eventList.size() < 1) {
+//                                Toast.makeText(getContext(), "You have no event on this day"
+//                                        , Toast.LENGTH_LONG).show();
+//                            }
+//                            Event.sort(eventList);
+//                            updateEventRecyclerView(eventList);
+//                        }
+//                    }
+//                });
     }
 
     @Override

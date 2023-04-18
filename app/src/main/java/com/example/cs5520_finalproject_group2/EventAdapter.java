@@ -38,6 +38,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         }
     }
 
+    public ArrayList<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(ArrayList<Event> events) {
+        this.events = events;
+    }
+
     @NonNull
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
