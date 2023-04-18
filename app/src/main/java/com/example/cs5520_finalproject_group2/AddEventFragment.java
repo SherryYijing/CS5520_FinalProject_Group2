@@ -15,6 +15,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class AddEventFragment extends Fragment {
@@ -24,6 +27,8 @@ public class AddEventFragment extends Fragment {
     Button addSaveButton;
     Event event;
     IAddEventActivity addEventActivity;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore db;
     public AddEventFragment() {
         // Required empty public constructor
     }
@@ -39,6 +44,8 @@ public class AddEventFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
+        firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         if (getArguments() != null) {
             if (args.containsKey(ARG_DAY)) {
                 event.setDay(args.getString(ARG_DAY));
@@ -93,7 +100,11 @@ public class AddEventFragment extends Fragment {
     }
 
     private void addEventToDb(Event event) {
-
+        db.collection("user")
+                .document(firebaseAuth.getCurrentUser().getEmail())
+                .collection(event.getDay())
+                .document(event.getStartTime())
+                .set(event);
     }
 
     private int getDefaultCheckedDay(String day) {

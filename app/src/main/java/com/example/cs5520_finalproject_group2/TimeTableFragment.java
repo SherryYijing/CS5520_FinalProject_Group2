@@ -15,6 +15,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
 
 public class TimeTableFragment extends Fragment implements RecyclerViewClickListener {
@@ -28,6 +34,8 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
     private Event currentEvent;
     private String selectedDay;
     private ITimeTableActivity iListener;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore db;
     public TimeTableFragment() {
         // Required empty public constructor
     }
@@ -42,6 +50,8 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         loadEventFromDb("Mon");
     }
 

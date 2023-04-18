@@ -29,6 +29,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.concurrent.ExecutionException;
 
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link TakePhotoFragment#newInstance} factory method to

@@ -56,4 +56,12 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     // Glide v4 uses this new annotation processor -- see https://bumptech.github.io/glide/doc/generatedapi.html
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
+
+    // 4. openstreetmap
+    implementation 'org.osmdroid:osmdroid-android:6.1.16'
+    implementation 'com.github.MKergall:osmbonuspack:6.9.0'
+    implementation 'org.osmdroid:osmdroid-android:6.1.16'
+    implementation 'org.apache.commons:commons-lang3:3.8.1'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 }

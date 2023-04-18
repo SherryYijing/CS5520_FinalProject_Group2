@@ -105,6 +105,15 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
+        myTimeTableButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.timetable();
+//                Intent map = new Intent(getActivity(), MapActivity.class);
+//                startActivity(map);
+            }
+        });
+
         return view;
     }
 
@@ -120,5 +129,6 @@ public class UserProfileFragment extends Fragment {
 
     public interface fromUserProfileFragment{
         void logout();
+        void timetable();
     }
 }

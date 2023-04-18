@@ -55,22 +55,22 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void populateTheScreen() {
-//        if (currentUser != null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.fragmentContainer, UserProfileFragment.newInstance(),
-//                            "mainFragment")
-//                    .commit();
-//
-//        } else {
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.fragmentContainer, LoginPageFragment.newInstance(),
-//                            "loginFragment")
-//                    .commit();
-//        }
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
-                        "TimeTableFragment")
-                .commit();
+        if (currentUser != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, UserProfileFragment.newInstance(),
+                            "mainFragment")
+                    .commit();
+
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, LoginPageFragment.newInstance(),
+                            "loginFragment")
+                    .commit();
+        }
+//        getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
+//                        "TimeTableFragment")
+//                .commit();
     }
 
 
@@ -178,7 +178,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void toNavigation(String day) {
-
+        Intent map = new Intent(MainActivity.this, MapActivity.class);
+        startActivity(map);
     }
 
     @Override
@@ -191,6 +192,14 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void deleteEvent() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
+                        "TimeTableFragment")
+                .commit();
+    }
+
+    @Override
+    public void timetable() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
                         "TimeTableFragment")
