@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.WeekViewHolder> {
 
     private ArrayList<Week> items;
-    private int index = -1;
+    private int index = 0;
     private RecyclerViewClickListener rListener;
     private View view;
 

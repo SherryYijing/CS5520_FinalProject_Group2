@@ -14,13 +14,17 @@ import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class EditEventFragment extends Fragment {
     private static final String ARG_EVENT = "event";
     private Event event;
     private TextView editEventName, editStartTime, editEndTime, editEventLocation;
-    private RadioGroup editGroup;
     private Button editSaveButton, editDeleteButton;
     private IEditEventActivity editEventActivity;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore db;
 
     public EditEventFragment() {
         // Required empty public constructor
@@ -38,6 +42,8 @@ public class EditEventFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
+        firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         if (getArguments() != null) {
             if (args.containsKey(ARG_EVENT)) {
                 event = (Event) args.getSerializable(ARG_EVENT);
@@ -54,7 +60,6 @@ public class EditEventFragment extends Fragment {
         editStartTime = view.findViewById(R.id.editStartTime);
         editEndTime = view.findViewById(R.id.editEndTime);
         editEventLocation = view.findViewById(R.id.editEventLocation);
-        editGroup = view.findViewById(R.id.editGroup);
         editSaveButton = view.findViewById(R.id.editSaveButton);
         editDeleteButton = view.findViewById(R.id.editDeleteButton);
 
@@ -102,9 +107,19 @@ public class EditEventFragment extends Fragment {
     }
 
     private void deleteEventInDb(Event event) {
+        db.collection("users")
+                .document(firebaseAuth.getCurrentUser().getEmail())
+                .collection(event.getDay())
+                .document(event.getName())
+                .delete();
     }
 
     private void editEventInDb(Event event) {
+        db.collection("user")
+                .document(firebaseAuth.getCurrentUser().getEmail())
+                .collection(event.getDay())
+                .document(event.getName())
+                .set(event);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.cs5520_finalproject_group2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Event implements Serializable {
 
@@ -66,5 +67,11 @@ public class Event implements Serializable {
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 '}';
+    }
+
+    public static void sort(ArrayList<Event> events) {
+        events.sort((o1, o2)
+                -> o1.getStartTime().compareTo(
+                o2.getStartTime()));
     }
 }

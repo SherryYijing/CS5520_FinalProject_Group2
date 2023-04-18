@@ -7,20 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".EditEventFragment">
 
-    <TextView
-        android:id="@+id/editRepeat"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:text="@string/addRepeat"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editEventLocation" />
-
     <EditText
         android:id="@+id/editEventLocation"
         android:layout_width="0dp"
@@ -99,72 +85,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <RadioGroup
-        android:id="@+id/editGroup"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editRepeat">
-
-        <RadioButton
-            android:id="@+id/editMon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/editMon" />
-
-        <RadioButton
-            android:id="@+id/editTue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/editTue" />
-
-        <RadioButton
-            android:id="@+id/editWed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/editWed" />
-
-        <RadioButton
-            android:id="@+id/editThu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/editThu" />
-
-        <RadioButton
-            android:id="@+id/editFri"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/editFri" />
-    </RadioGroup>
-
     <Button
         android:id="@+id/editSaveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:text="@string/editSaveButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/editEventLocation" />
 
     <Button
         android:id="@+id/editDeleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="64dp"
         android:text="@string/editDeleteButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/editEventLocation" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

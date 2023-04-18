@@ -87,69 +87,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addEventTitle" />
 
-    <TextView
-        android:id="@+id/addRepeat"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:text="@string/addRepeat"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addEventLocation" />
-
-    <RadioGroup
-        android:id="@+id/addGroup"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addRepeat">
-
-        <RadioButton
-            android:id="@+id/addMon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/addMon" />
-
-        <RadioButton
-            android:id="@+id/addTue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/addTue"
-            tools:ignore="TouchTargetSizeCheck" />
-
-        <RadioButton
-            android:id="@+id/addWed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/addWed" />
-
-        <RadioButton
-            android:id="@+id/addThu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/addThu" />
-
-        <RadioButton
-            android:id="@+id/addFri"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/addFri" />
-
-    </RadioGroup>
-
     <Button
         android:id="@+id/addSaveButton"
         android:layout_width="wrap_content"
@@ -160,6 +97,6 @@
         android:text="@string/addSaveButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/addEventLocation" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

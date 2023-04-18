@@ -19,7 +19,8 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements
         RegisterPageFragment.fromRegisterPageFragment, LoginPageFragment.fromLoginPageFragment,
         UserProfileFragment.fromUserProfileFragment, AddEventFragment.IAddEventActivity,
-        TimeTableFragment.ITimeTableActivity, EditEventFragment.IEditEventActivity {
+        TimeTableFragment.ITimeTableActivity, EditEventFragment.IEditEventActivity,
+        EventAdapter.IEventAdapterAction {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
     private String registering = null;
@@ -203,6 +204,14 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
                         "TimeTableFragment")
+                .commit();
+    }
+
+    @Override
+    public void toEdit(Event event) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, EditEventFragment.newInstance(event),
+                        "EditEventFragment")
                 .commit();
     }
 }

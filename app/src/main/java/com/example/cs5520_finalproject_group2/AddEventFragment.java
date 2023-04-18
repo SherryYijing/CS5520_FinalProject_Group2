@@ -23,7 +23,6 @@ import java.util.ArrayList;
 public class AddEventFragment extends Fragment {
     private static final String ARG_DAY = "day";
     TextView addEventName, addStartTime, addEndTime, addEventLocation;
-    RadioGroup addGroup;
     Button addSaveButton;
     Event event;
     IAddEventActivity addEventActivity;
@@ -46,6 +45,7 @@ public class AddEventFragment extends Fragment {
         Bundle args = getArguments();
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        event = new Event();
         if (getArguments() != null) {
             if (args.containsKey(ARG_DAY)) {
                 event.setDay(args.getString(ARG_DAY));
@@ -64,10 +64,8 @@ public class AddEventFragment extends Fragment {
         addStartTime = view.findViewById(R.id.addStartTime);
         addEndTime = view.findViewById(R.id.addEndTime);
         addEventLocation = view.findViewById(R.id.addEventLocation);
-        addGroup = view.findViewById(R.id.addGroup);
         addSaveButton = view.findViewById(R.id.addSaveButton);
 
-        addGroup.check(getDefaultCheckedDay(day));
 
         addSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +103,7 @@ public class AddEventFragment extends Fragment {
                 .collection(event.getDay())
                 .document(event.getName())
                 .set(event);
+        Log.d("add", "addEventToDb: " + event.toString());
     }
 
     private int getDefaultCheckedDay(String day) {
