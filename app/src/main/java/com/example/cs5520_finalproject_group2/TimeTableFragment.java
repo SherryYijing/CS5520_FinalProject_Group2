@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -80,16 +81,16 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
         weekRecyclerView.setAdapter(weekAdapter);
         selectedDay = "Mon";
 
-        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-        events.add(new Event("CS5200", "EastVillage", "Mon","15:00", "16:00"));
-        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-        events.add(new Event("CS5200", "EastVillage", "Mon","17:00", "18:00"));
-        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+//        events.add(new Event("CS5200", "EastVillage", "Mon","15:00", "16:00"));
+//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+//        events.add(new Event("CS5200", "EastVillage", "Mon","17:00", "18:00"));
+//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
 
         Event.sort(events);
         eventRecyclerView = view.findViewById(R.id.eventRecyclerView);
@@ -121,15 +122,24 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
     private void loadEventFromDb(String day) {
         ArrayList<Event> eventList = new ArrayList<>();
         selectedDay = day;
+        Log.d("get", "loadEventFromDb: ");
         db.collection("users")
                 .document(currentUser.getEmail())
                 .collection(selectedDay)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .get()
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("get", "onFailure: ");
+                    }
+                })
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()) {
                             for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
                                 Event event = queryDocumentSnapshot.toObject(Event.class);
+                                Log.d("get", "onComplete: " + event.toString());
                                 eventList.add(event);
                             }
                             if (eventList.size() < 1) {
