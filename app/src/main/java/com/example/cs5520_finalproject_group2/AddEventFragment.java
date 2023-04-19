@@ -14,10 +14,18 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import org.checkerframework.checker.units.qual.A;
+
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class AddEventFragment extends Fragment {
@@ -28,6 +36,7 @@ public class AddEventFragment extends Fragment {
     IAddEventActivity addEventActivity;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
+    private ArrayList<Event> events = new ArrayList<>();
     public AddEventFragment() {
         // Required empty public constructor
     }
@@ -66,6 +75,21 @@ public class AddEventFragment extends Fragment {
         addEventLocation = view.findViewById(R.id.addEventLocation);
         addSaveButton = view.findViewById(R.id.addSaveButton);
 
+        db.collection("user")
+                .document(firebaseAuth.getCurrentUser().getEmail())
+                .collection(event.getDay())
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                Event event = queryDocumentSnapshot.toObject(Event.class);
+                                events.add(event);
+                            }
+                        }
+                    }
+                });
+
 
         addSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,8 +104,12 @@ public class AddEventFragment extends Fragment {
                     addStartTime.setError("Event Start Time Cannot Be Empty!");
                 } else if (endTime.equals("")) {
                     addEndTime.setError("Event End Time Cannot Be Empty!");
+                } else if (!validTime(startTime, endTime)) {
+                    addEndTime.setError("Start time should be earlier than end time!");
                 } else if (location.equals("")) {
                     addEventLocation.setError("Event Location Cannot Be Empty!");
+                } else if (!checkName(name)) {
+                    addEventName.setError("Event name already exists!");
                 } else {
                     event.setName(name);
                     event.setStartTime(startTime);
@@ -89,12 +117,23 @@ public class AddEventFragment extends Fragment {
                     event.setLocation(location);
                     Log.d("EVENT", "onClick: " + event.toString());
                     addEventToDb(event);
-                    addEventActivity.addEvent();
+                    addEventActivity.addEvent(event.getDay());
                 }
             }
         });
 
         return view;
+    }
+
+    public Boolean checkName(String name) {
+        Boolean notDuplicate = true;
+        for (Event e : events) {
+            if (e.getName().equals(name)) {
+                notDuplicate = false;
+                break;
+            }
+        }
+        return notDuplicate;
     }
 
     private void addEventToDb(Event event) {
@@ -103,22 +142,12 @@ public class AddEventFragment extends Fragment {
                 .collection(event.getDay())
                 .document(event.getName())
                 .set(event);
-        Log.d("add", "addEventToDb: " + event.toString());
     }
 
-    private int getDefaultCheckedDay(String day) {
-        if (day.equals("Mon")) {
-            return 0;
-        } else if (day.equals("Tue")) {
-            return 1;
-        } else if (day.equals("Wed")) {
-            return 2;
-        } else if (day.equals("Thu")) {
-            return 3;
-        } else if (day.equals("Fri")) {
-            return 4;
-        }
-        return 0;
+    private Boolean validTime(String startTime, String endTime) {
+        LocalTime start = LocalTime.parse(startTime);
+        LocalTime end = LocalTime.parse(endTime);
+        return (start.compareTo(end) < 0);
     }
 
     @Override
@@ -132,6 +161,6 @@ public class AddEventFragment extends Fragment {
     }
 
     public interface IAddEventActivity {
-        void addEvent();
+        void addEvent(String day);
     }
 }

@@ -13,9 +13,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.time.LocalTime;
 
 public class EditEventFragment extends Fragment {
     private static final String ARG_EVENT = "event";
@@ -64,8 +69,9 @@ public class EditEventFragment extends Fragment {
         editDeleteButton = view.findViewById(R.id.editDeleteButton);
 
         editEventName.setText(event.getName());
-        editStartTime.setText(event.getStartTime());
-        editEndTime.setText(event.getEndTime());
+        editEventName.setEnabled(false);
+        editStartTime.setText(event.getStartTime().toString());
+        editEndTime.setText(event.getEndTime().toString());
         editEventLocation.setText(event.getLocation());
 
         editSaveButton.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +87,8 @@ public class EditEventFragment extends Fragment {
                     editStartTime.setError("Event Start Time Cannot Be Empty!");
                 } else if (endTime.equals("")) {
                     editEndTime.setError("Event End Time Cannot Be Empty!");
+                } else if (!validTime(startTime, endTime)) {
+                    editEndTime.setError("Start time should be earlier than end time!");
                 } else if (location.equals("")) {
                     editEventLocation.setError("Event Location Cannot Be Empty!");
                 } else {
@@ -88,9 +96,8 @@ public class EditEventFragment extends Fragment {
                     event.setStartTime(startTime);
                     event.setEndTime(endTime);
                     event.setLocation(location);
-                    Log.d("EVENT", "onClick: " + event.toString());
                     editEventInDb(event);
-                    editEventActivity.editEvent();
+                    editEventActivity.editEvent(event.getDay());
                 }
             }
         });
@@ -99,7 +106,7 @@ public class EditEventFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 deleteEventInDb(event);
-                editEventActivity.deleteEvent();
+                editEventActivity.deleteEvent(event.getDay());
             }
         });
 
@@ -107,7 +114,7 @@ public class EditEventFragment extends Fragment {
     }
 
     private void deleteEventInDb(Event event) {
-        db.collection("users")
+        db.collection("user")
                 .document(firebaseAuth.getCurrentUser().getEmail())
                 .collection(event.getDay())
                 .document(event.getName())
@@ -122,6 +129,12 @@ public class EditEventFragment extends Fragment {
                 .set(event);
     }
 
+    private Boolean validTime(String startTime, String endTime) {
+        LocalTime start = LocalTime.parse(startTime);
+        LocalTime end = LocalTime.parse(endTime);
+        return (start.compareTo(end) < 0);
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -133,7 +146,7 @@ public class EditEventFragment extends Fragment {
     }
 
     public interface IEditEventActivity {
-        void editEvent();
-        void deleteEvent();
+        void editEvent(String day);
+        void deleteEvent(String day);
     }
 }

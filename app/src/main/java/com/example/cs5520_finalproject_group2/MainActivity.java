@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements
         if (currentUser != null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer, UserProfileFragment.newInstance(),
-                            "mainFragment")
+                            "mainFragment").addToBackStack(null)
                     .commit();
 
         } else {
@@ -68,10 +68,6 @@ public class MainActivity extends AppCompatActivity implements
                             "loginFragment")
                     .commit();
         }
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
-//                        "TimeTableFragment")
-//                .commit();
     }
 
 
@@ -162,9 +158,9 @@ public class MainActivity extends AppCompatActivity implements
 
 
     @Override
-    public void addEvent() {
+    public void addEvent(String day) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
+                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(day),
                         "TimeTableFragment")
                 .commit();
     }
@@ -184,25 +180,33 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void editEvent() {
+    public void toUserProfile() {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
+                .replace(R.id.fragmentContainer, UserProfileFragment.newInstance(),
+                        "UserProfileFragment")
+                .commit();
+    }
+
+    @Override
+    public void editEvent(String day) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(day),
                         "TimeTableFragment")
                 .commit();
     }
 
     @Override
-    public void deleteEvent() {
+    public void deleteEvent(String day) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
+                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(day),
                         "TimeTableFragment")
                 .commit();
     }
 
     @Override
     public void timetable() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(),
+        getSupportFragmentManager().beginTransaction().addToBackStack(null)
+                .replace(R.id.fragmentContainer, TimeTableFragment.newInstance(null),
                         "TimeTableFragment")
                 .commit();
     }

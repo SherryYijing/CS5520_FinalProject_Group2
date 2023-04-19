@@ -49,5 +49,12 @@
     <string name="editWed">Wed</string>
     <string name="editThu">Thu</string>
     <string name="editFri">Fri</string>
-    <string name="editDeleteButton">Delete</string>>
+    <string name="editDeleteButton">Delete</string>
+    <string name="dayView">Event for Monday</string>
+    <string name="timeTableMon">Mon</string>
+    <string name="timeTableTue">Tue</string>
+    <string name="timeTableWed">Wed</string>
+    <string name="timeTableThu">Thu</string>
+    <string name="timeTableFri">Fri</string>
+    <string name="timeTableBack">Back</string>>
 </resources>

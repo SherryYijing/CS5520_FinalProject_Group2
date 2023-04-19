@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,17 +30,19 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class TimeTableFragment extends Fragment implements RecyclerViewClickListener {
-    private Button newEventButton, showNavigationButton;
+public class TimeTableFragment extends Fragment {
+    private Button newEventButton, showNavigationButton, timeTableBack;
+    private TextView timeTableMon, timeTableTue, timeTableWed, timeTableThu, timeTableFri;
     private static final String ARG_DAY = "day";
-    private RecyclerView weekRecyclerView, eventRecyclerView;
-    private WeekAdapter weekAdapter;
+    private RecyclerView eventRecyclerView;
     private ArrayList<Event> events = new ArrayList<>();
+
     private EventAdapter eventAdapter;
-    private Event currentEvent;
     private String selectedDay;
+    private TextView dayView;
     private ITimeTableActivity iListener;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
@@ -48,9 +51,10 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
         // Required empty public constructor
     }
 
-    public static TimeTableFragment newInstance() {
+    public static TimeTableFragment newInstance(String day) {
         TimeTableFragment fragment = new TimeTableFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_DAY, day);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,7 +65,16 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
-        loadEventFromDb("Mon");
+        Bundle args = getArguments();
+        if (getArguments() != null) {
+            if (args.containsKey(ARG_DAY)) {
+                selectedDay = args.getString(ARG_DAY);
+                if (selectedDay == null) {
+                    selectedDay = "Mon";
+                }
+            }
+        }
+        loadEventFromDb();
     }
 
     @Override
@@ -71,39 +84,74 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
         View view = inflater.inflate(R.layout.fragment_time_table, container, false);
         newEventButton = view.findViewById(R.id.newEventButton);
         showNavigationButton = view.findViewById(R.id.showNavigationButton);
-        ArrayList<Week> weekdays = new ArrayList<>();
-        weekdays.add(new Week("Mon"));
-        weekdays.add(new Week("Tue"));
-        weekdays.add(new Week("Wed"));
-        weekdays.add(new Week("Thu"));
-        weekdays.add(new Week("Fri"));
-        weekRecyclerView = view.findViewById(R.id.weekRecyclerView);
-        weekAdapter = new WeekAdapter(weekdays, view, this);
-        weekRecyclerView.setLayoutManager(new LinearLayoutManager(
-                this.getContext(), LinearLayoutManager.HORIZONTAL, false
-        ));
-        weekRecyclerView.setAdapter(weekAdapter);
-        selectedDay = "Mon";
+        timeTableMon = view.findViewById(R.id.timeTableMon);
+        timeTableTue = view.findViewById(R.id.timeTableTue);
+        timeTableWed = view.findViewById(R.id.timeTableWed);
+        timeTableThu = view.findViewById(R.id.timeTableThu);
+        timeTableFri = view.findViewById(R.id.timeTableFri);
+        timeTableBack = view.findViewById(R.id.timeTableBack);
+        dayView = view.findViewById(R.id.dayView);
 
-//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-//        events.add(new Event("CS5200", "EastVillage", "Mon","15:00", "16:00"));
-//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-//        events.add(new Event("CS5200", "EastVillage", "Mon","17:00", "18:00"));
-//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
-//        events.add(new Event("CS5200", "EastVillage", "Mon","12:00", "14:00"));
+        timeTableBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iListener.toUserProfile();
+            }
+        });
 
-        Event.sort(events);
+        timeTableMon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDay = "Mon";
+                dayView.setText("Events for " + selectedDay);
+                loadEventFromDb();
+            }
+        });
+
+        timeTableTue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDay = "Tue";
+                dayView.setText("Events for " + selectedDay);
+                loadEventFromDb();
+            }
+        });
+
+        timeTableWed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDay = "Wed";
+                dayView.setText("Events for " + selectedDay);
+                loadEventFromDb();
+            }
+        });
+
+        timeTableThu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDay = "Thu";
+                dayView.setText("Events for " + selectedDay);
+                loadEventFromDb();
+            }
+        });
+
+        timeTableFri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDay = "Fri";
+                dayView.setText("Events for " + selectedDay);
+                loadEventFromDb();
+            }
+        });
+
         eventRecyclerView = view.findViewById(R.id.eventRecyclerView);
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         eventAdapter = new EventAdapter(events, this.getContext());
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         eventRecyclerView.setAdapter(eventAdapter);
-        loadEventFromDb(selectedDay);
-
+        Event.sort(events);
+        loadEventFromDb();
+        dayView.setText("Events for " + selectedDay);
 
         newEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,12 +190,8 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
         return view;
     }
 
-    private void loadEventFromDb(String day) {
+    private void loadEventFromDb() {
         ArrayList<Event> eventList = new ArrayList<>();
-        selectedDay = day;
-//        Log.d("get", "loadEventFromDb: ");
-
-
         db.collection("user")
                 .document(currentUser.getEmail())
                 .collection(selectedDay)
@@ -159,67 +203,20 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
                                 Event event = queryDocumentSnapshot.toObject(Event.class);
                                 eventList.add(event);
                             }
-                            updateEventRecyclerView(eventList);
+                            Log.d("load", "onComplete: " + eventList.size());
+                            if (eventList.size() < 1) {
+                                Toast.makeText(getContext(), "You don't have any event on this day",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                            Event.sort(eventList);
+                            Log.d("sort", "onComplete: " + eventList.toString());
+                            eventAdapter.setEvents(eventList);
+                            eventAdapter.notifyDataSetChanged();
                         }
                     }
                 });
-//        db.collection("users")
-//                .document(currentUser.getEmail())
-//                .collection(selectedDay)
-//                .get()
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.d("get", "onFailure: ");
-//                    }
-//                })
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if(task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-//                                Event event = queryDocumentSnapshot.toObject(Event.class);
-//                                Log.d("demo", "onComplete: " + queryDocumentSnapshot.toString());
-//                                eventList.add(event);
-//                            }
-//                            if (eventList.size() < 1) {
-//                                Toast.makeText(getContext(), "You have no event on this day"
-//                                        , Toast.LENGTH_LONG).show();
-//                            }
-//                            Event.sort(eventList);
-//                            updateEventRecyclerView(eventList);
-//                        }
-//                    }
-//                });
     }
 
-    @Override
-    public void recyclerViewListClicked(int position) {
-        switch (position) {
-            case 0:
-                this.selectedDay = "Mon";
-                break;
-            case 1:
-                this.selectedDay = "Tue";
-                break;
-            case 2:
-                this.selectedDay = "Wed";
-                break;
-            case 3:
-                this.selectedDay = "Thu";
-                break;
-            case 4:
-                this.selectedDay = "Fri";
-                break;
-        }
-        loadEventFromDb(this.selectedDay);
-        Log.d("click", "recyclerViewListClicked: " + this.selectedDay);
-    }
-
-    public void updateEventRecyclerView(ArrayList<Event> events){
-        this.events = events;
-        eventAdapter.notifyDataSetChanged();
-    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -231,9 +228,11 @@ public class TimeTableFragment extends Fragment implements RecyclerViewClickList
         }
     }
 
+
     public interface ITimeTableActivity {
         void toAddEvent(String day);
         void toNavigation(String day);
+        void toUserProfile();
     }
 
 }
