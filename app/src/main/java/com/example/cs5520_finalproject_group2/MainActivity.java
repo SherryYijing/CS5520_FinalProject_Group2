@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void toNavigation(String day) {
         Intent map = new Intent(MainActivity.this, MapActivity.class);
+        map.putExtra("data", day);
         startActivity(map);
     }
 
