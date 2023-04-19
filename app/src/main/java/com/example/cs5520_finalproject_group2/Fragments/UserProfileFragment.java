@@ -1,4 +1,4 @@
-package com.example.cs5520_finalproject_group2;
+package com.example.cs5520_finalproject_group2.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.cs5520_finalproject_group2.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

@@ -1,4 +1,4 @@
-package com.example.cs5520_finalproject_group2;
+package com.example.cs5520_finalproject_group2.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -6,17 +6,14 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.cs5520_finalproject_group2.Models.Event;
+import com.example.cs5520_finalproject_group2.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -26,7 +23,7 @@ public class EditEventFragment extends Fragment {
     private static final String ARG_EVENT = "event";
     private Event event;
     private TextView editEventName, editStartTime, editEndTime, editEventLocation;
-    private Button editSaveButton, editDeleteButton;
+    private Button editSaveButton, editDeleteButton, editBack;
     private IEditEventActivity editEventActivity;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
@@ -67,6 +64,7 @@ public class EditEventFragment extends Fragment {
         editEventLocation = view.findViewById(R.id.editEventLocation);
         editSaveButton = view.findViewById(R.id.editSaveButton);
         editDeleteButton = view.findViewById(R.id.editDeleteButton);
+        editBack = view.findViewById(R.id.editBack);
 
         editEventName.setText(event.getName());
         editEventName.setEnabled(false);
@@ -99,6 +97,13 @@ public class EditEventFragment extends Fragment {
                     editEventInDb(event);
                     editEventActivity.editEvent(event.getDay());
                 }
+            }
+        });
+
+        editBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editEventActivity.editEvent(event.getDay());
             }
         });
 

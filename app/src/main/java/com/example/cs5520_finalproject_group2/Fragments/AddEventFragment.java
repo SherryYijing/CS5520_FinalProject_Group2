@@ -1,4 +1,4 @@
-package com.example.cs5520_finalproject_group2;
+package com.example.cs5520_finalproject_group2.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -6,16 +6,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cs5520_finalproject_group2.Models.Event;
+import com.example.cs5520_finalproject_group2.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,15 +22,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 public class AddEventFragment extends Fragment {
     private static final String ARG_DAY = "day";
     TextView addEventName, addStartTime, addEndTime, addEventLocation;
-    Button addSaveButton;
+    Button addSaveButton, addBack;
     Event event;
     IAddEventActivity addEventActivity;
     private FirebaseAuth firebaseAuth;
@@ -74,6 +72,7 @@ public class AddEventFragment extends Fragment {
         addEndTime = view.findViewById(R.id.addEndTime);
         addEventLocation = view.findViewById(R.id.addEventLocation);
         addSaveButton = view.findViewById(R.id.addSaveButton);
+        addBack = view.findViewById(R.id.addBack);
 
         db.collection("user")
                 .document(firebaseAuth.getCurrentUser().getEmail())
@@ -115,10 +114,16 @@ public class AddEventFragment extends Fragment {
                     event.setStartTime(startTime);
                     event.setEndTime(endTime);
                     event.setLocation(location);
-                    Log.d("EVENT", "onClick: " + event.toString());
                     addEventToDb(event);
                     addEventActivity.addEvent(event.getDay());
                 }
+            }
+        });
+
+        addBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addEventActivity.addEvent(day);
             }
         });
 
@@ -145,9 +150,14 @@ public class AddEventFragment extends Fragment {
     }
 
     private Boolean validTime(String startTime, String endTime) {
-        LocalTime start = LocalTime.parse(startTime);
-        LocalTime end = LocalTime.parse(endTime);
-        return (start.compareTo(end) < 0);
+        try {
+            LocalTime start = LocalTime.parse(startTime);
+            LocalTime end = LocalTime.parse(endTime);
+            return (start.compareTo(end) < 0);
+        } catch (DateTimeParseException e) {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return false;
     }
 
     @Override

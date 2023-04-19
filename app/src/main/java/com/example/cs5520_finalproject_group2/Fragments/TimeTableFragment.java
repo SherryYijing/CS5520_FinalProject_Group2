@@ -1,16 +1,14 @@
-package com.example.cs5520_finalproject_group2;
+package com.example.cs5520_finalproject_group2.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +16,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cs5520_finalproject_group2.Models.Event;
+import com.example.cs5520_finalproject_group2.Models.EventAdapter;
+import com.example.cs5520_finalproject_group2.R;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,7 +30,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class TimeTableFragment extends Fragment {
@@ -203,13 +202,11 @@ public class TimeTableFragment extends Fragment {
                                 Event event = queryDocumentSnapshot.toObject(Event.class);
                                 eventList.add(event);
                             }
-                            Log.d("load", "onComplete: " + eventList.size());
                             if (eventList.size() < 1) {
                                 Toast.makeText(getContext(), "You don't have any event on this day",
                                         Toast.LENGTH_LONG).show();
                             }
                             Event.sort(eventList);
-                            Log.d("sort", "onComplete: " + eventList.toString());
                             eventAdapter.setEvents(eventList);
                             eventAdapter.notifyDataSetChanged();
                         }

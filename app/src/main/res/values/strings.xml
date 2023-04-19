@@ -56,5 +56,7 @@
     <string name="timeTableWed">Wed</string>
     <string name="timeTableThu">Thu</string>
     <string name="timeTableFri">Fri</string>
-    <string name="timeTableBack">Back</string>>
+    <string name="timeTableBack">Back</string>
+    <string name="addBack">Back</string>
+    <string name="editBack">back</string>>
 </resources>

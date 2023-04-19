@@ -8,8 +8,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
+import com.example.cs5520_finalproject_group2.Fragments.AddEventFragment;
+import com.example.cs5520_finalproject_group2.Fragments.EditEventFragment;
+import com.example.cs5520_finalproject_group2.Fragments.LoginPageFragment;
+import com.example.cs5520_finalproject_group2.Fragments.RegisterPageFragment;
+import com.example.cs5520_finalproject_group2.Fragments.TimeTableFragment;
+import com.example.cs5520_finalproject_group2.Fragments.UserProfileFragment;
+import com.example.cs5520_finalproject_group2.Models.Event;
+import com.example.cs5520_finalproject_group2.Models.EventAdapter;
 import com.example.cs5520_finalproject_group2.TakePhoto.PhotoMainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

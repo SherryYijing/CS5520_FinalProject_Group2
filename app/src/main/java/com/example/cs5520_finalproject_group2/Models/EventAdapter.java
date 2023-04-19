@@ -1,7 +1,6 @@
-package com.example.cs5520_finalproject_group2;
+package com.example.cs5520_finalproject_group2.Models;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.cs5520_finalproject_group2.R;
 
 import java.util.ArrayList;
 
@@ -62,12 +63,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         holder.eventName.setText(currentEvent.getName());
         holder.eventTime.setText(currentEvent.getStartTime() + " - " + currentEvent.getEndTime());
         holder.eventLocation.setText(currentEvent.getLocation());
-        Log.d("edit", "onBindViewHolder: " + currentEvent.toString());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("edit", "onBindViewHolder: " + currentEvent.toString());
                 eListener.toEdit(currentEvent);
             }
         });

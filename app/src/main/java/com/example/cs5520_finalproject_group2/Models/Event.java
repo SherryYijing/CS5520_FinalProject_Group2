@@ -1,7 +1,6 @@
-package com.example.cs5520_finalproject_group2;
+package com.example.cs5520_finalproject_group2.Models;
 
 import java.io.Serializable;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Event implements Serializable {
