@@ -1,5 +1,6 @@
 package com.example.cs5520_finalproject_group2;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -7,12 +8,25 @@ import android.Manifest;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.View;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
@@ -25,6 +39,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
@@ -34,6 +49,9 @@ public class MapActivity extends AppCompatActivity {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MyLocationNewOverlay myLocationOverlay;
     private MapView map = null;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore db;
+    private FirebaseUser currentUser;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +74,10 @@ public class MapActivity extends AppCompatActivity {
 
         //inflate and create the map
         setContentView(R.layout.activity_map);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -129,46 +151,97 @@ public class MapActivity extends AppCompatActivity {
         // Create start point.
 
         // Use getGeocode function to get latitude and longitude.
-        getGeocode("Northeastern University");
-
+        Address address = getGeocode("Northeastern University");
+        // Create start point.
+        GeoPoint startPoint = new GeoPoint(address.getLatitude(), address.getLongitude());
         Marker startMarker = new Marker(map);
-        GeoPoint startPoint = new GeoPoint(42.3385434,-71.0971816);
+//        GeoPoint startPoint = new GeoPoint(42.3385434,-71.0971816);
         startMarker.setPosition(startPoint);
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         map.getOverlays().add(startMarker);
         map.invalidate();
+        startMarker.setTitle("Start point");
+
+//        Marker startMarker = new Marker(map);
+//        GeoPoint startPoint = new GeoPoint(42.3385434,-71.0971816);
+//        startMarker.setPosition(startPoint);
+//        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+//        map.getOverlays().add(startMarker);
+//        map.invalidate();
 //        startMarker.setTitle("Start point");
 
         // Make the center of the map to be the start point.
         mapController.setCenter(startPoint);
 
-        // Create stop point.
-        Marker endMarker = new Marker(map);
-        GeoPoint endPoint = new GeoPoint(42.3395109,-71.0913559);
-        endMarker.setPosition(endPoint);
-        endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        map.getOverlays().add(endMarker);
-        map.invalidate();
-        endMarker.setTitle("End point");
+        Intent intent = getIntent();
+        String day = intent.getStringExtra("data");
+        ArrayList<Event> eventList = new ArrayList<>();
+        db.collection("user")
+                .document(currentUser.getEmail())
+                .collection(day)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            // Get road between start point and end point.
+                            RoadManager roadManager = new OSRMRoadManager(ctx, getPackageName());
+                            ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
+                            waypoints.add(startPoint);
+                            for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()){
+                                Event event = queryDocumentSnapshot.toObject(Event.class);
+                                eventList.add(event);
+                                Address address = getGeocode(event.getLocation());
+                                waypoints.add(new GeoPoint(address.getLatitude(), address.getLongitude()));
+                            }
+                            Road road = roadManager.getRoad(waypoints);
+                            Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
+                            map.getOverlays().add(roadOverlay);
+                            map.invalidate();
 
-        // Get road between start point and end point.
-        RoadManager roadManager = new OSRMRoadManager(this, getPackageName());
-        ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
-        waypoints.add(startPoint);
-        waypoints.add(endPoint);
-        Road road = roadManager.getRoad(waypoints);
-        Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
-        map.getOverlays().add(roadOverlay);
-        map.invalidate();
+                            // Mark each event location.
+                            for (int i=0; i < waypoints.size(); i++){
+//                                RoadNode node = road.mNodes.get(i);
+                                Marker nodeMarker = new Marker(map);
+                                nodeMarker.setPosition(waypoints.get(i));
+                                if(i == 0){
+                                    nodeMarker.setTitle("Start location");
+                                }
+                                else {
+                                    nodeMarker.setTitle("Event " + i + " location");
+                                }
+                                map.getOverlays().add(nodeMarker);
+                            }
+                        }
+                    }
+                });
 
-        // Mark each step.
-        for (int i=0; i < road.mNodes.size(); i++){
-            RoadNode node = road.mNodes.get(i);
-            Marker nodeMarker = new Marker(map);
-            nodeMarker.setPosition(node.mLocation);
-            nodeMarker.setTitle("Step "+ i);
-            map.getOverlays().add(nodeMarker);
-        }
+//        // Create stop point.
+//        Marker endMarker = new Marker(map);
+//        GeoPoint endPoint = new GeoPoint(42.3395109,-71.0913559);
+//        endMarker.setPosition(endPoint);
+//        endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+//        map.getOverlays().add(endMarker);
+//        map.invalidate();
+//        endMarker.setTitle("End point");
+//
+//        // Get road between start point and end point.
+//        RoadManager roadManager = new OSRMRoadManager(this, getPackageName());
+//        ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
+//        waypoints.add(startPoint);
+//        waypoints.add(endPoint);
+//        Road road = roadManager.getRoad(waypoints);
+//        Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
+//        map.getOverlays().add(roadOverlay);
+//        map.invalidate();
+//
+//        // Mark each step.
+//        for (int i=0; i < road.mNodes.size(); i++){
+//            RoadNode node = road.mNodes.get(i);
+//            Marker nodeMarker = new Marker(map);
+//            nodeMarker.setPosition(node.mLocation);
+//            nodeMarker.setTitle("Step "+ i);
+//            map.getOverlays().add(nodeMarker);
+//        }
 
         requestPermissionsIfNecessary(new String[]{
                 // if you need to show the current location, uncomment the line below
