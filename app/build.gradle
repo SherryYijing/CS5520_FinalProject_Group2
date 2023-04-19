@@ -4,6 +4,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\yijin\\yijingKeystore\\yijingKeyStore.jks')
+            storePassword '123456'
+            keyAlias 'Key1'
+            keyPassword '123456'
+        }
+    }
     namespace 'com.example.cs5520_finalproject_group2'
     compileSdk 33
 
@@ -15,6 +23,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.debug
     }
 
     buildTypes {
