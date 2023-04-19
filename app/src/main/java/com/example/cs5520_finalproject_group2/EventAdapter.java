@@ -43,6 +43,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     }
 
     public void setEvents(ArrayList<Event> events) {
+        Event.sort(events);
         this.events = events;
     }
 
